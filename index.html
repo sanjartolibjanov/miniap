@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>UZM BONUS RULETKA</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#001b12;color:#fff;font-family:Arial,sans-serif}
+body{min-height:100vh}
+button{font:inherit;border:0;cursor:pointer}
+.app{width:100%;max-width:560px;margin:auto;padding:18px 14px 35px}
+.header{text-align:center;padding:8px 0 18px}
+.logo{font-size:54px}
+h1{font-size:30px;margin:8px 0;color:#fff}
+.subtitle{color:#9fc0b5;font-size:16px}
+.card{background:#06291f;border:1px solid #1d5b49;border-radius:24px;padding:22px;margin:14px 0;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.screen{display:none}
+.screen.active{display:block}
+.title{text-align:center;color:#ffd43d;font-size:21px;font-weight:900;margin-bottom:16px}
+.btn{width:100%;border-radius:17px;padding:17px;font-size:18px;font-weight:900;background:#25e58a;color:#032116;margin-top:15px}
+.btn:disabled{opacity:.55}
+.secondary{background:#173d31;color:#fff}
+.yellow{background:#ffd43d;color:#201a00}
+.notice{text-align:center;color:#b8d0c8;font-size:15px;line-height:1.45}
+.error{color:#ff8f8f;text-align:center;margin-top:10px}
+.amount{font-size:48px;font-weight:900;color:#ffd43d;text-align:center;margin:18px 0}
+.result-icon{text-align:center;font-size:54px}
+.result-title{text-align:center;font-size:34px;font-weight:900;margin:8px 0 16px}
+.wheel-wrap{position:relative;width:min(92vw,470px);height:min(92vw,470px);margin:8px auto 18px}
+.wheel{position:absolute;inset:0;border-radius:50%;border:11px solid #dcae24;box-shadow:0 0 0 5px #714f09,0 16px 35px rgba(0,0,0,.5);transition:transform 4.8s cubic-bezier(.12,.7,.1,1);background:
+conic-gradient(
+#e82d4e 0deg 27.692deg,
+#f5bf27 27.692deg 55.384deg,
+#159b68 55.384deg 83.076deg,
+#e82d4e 83.076deg 110.768deg,
+#f5bf27 110.768deg 138.46deg,
+#159b68 138.46deg 166.152deg,
+#e82d4e 166.152deg 193.844deg,
+#f5bf27 193.844deg 221.536deg,
+#159b68 221.536deg 249.228deg,
+#e82d4e 249.228deg 276.92deg,
+#f5bf27 276.92deg 304.612deg,
+#159b68 304.612deg 332.304deg,
+#e82d4e 332.304deg 360deg);
+overflow:hidden}
+.wheel:after{content:"";position:absolute;inset:30px;border:2px solid rgba(255,255,255,.75);border-radius:50%}
+.center{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);width:94px;height:94px;border-radius:50%;background:#edf7f4;color:#06372a;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;border:9px solid #dcae24;box-shadow:0 7px 18px rgba(0,0,0,.45)}
+.pointer{position:absolute;z-index:20;left:50%;top:-5px;transform:translateX(-50%);width:0;height:0;border-left:23px solid transparent;border-right:23px solid transparent;border-top:0;border-bottom:48px solid #ffd13d;filter:drop-shadow(0 5px 5px rgba(0,0,0,.45))}
+.label{position:absolute;z-index:4;left:50%;top:50%;width:120px;text-align:center;font-weight:900;font-size:15px;line-height:1.05;text-shadow:2px 2px 3px #000;transform-origin:center}
+.l1{transform:translate(-50%,-50%) translateY(-158px)}
+.l2{transform:translate(-50%,-50%) rotate(27.692deg) translateY(-158px) rotate(-27.692deg)}
+.l3{transform:translate(-50%,-50%) rotate(55.384deg) translateY(-158px) rotate(-55.384deg)}
+.l4{transform:translate(-50%,-50%) rotate(83.076deg) translateY(-158px) rotate(-83.076deg)}
+.l5{transform:translate(-50%,-50%) rotate(110.768deg) translateY(-158px) rotate(-110.768deg)}
+.l6{transform:translate(-50%,-50%) rotate(138.46deg) translateY(-158px) rotate(-138.46deg)}
+.l7{transform:translate(-50%,-50%) rotate(166.152deg) translateY(-158px) rotate(-166.152deg)}
+.l8{transform:translate(-50%,-50%) rotate(193.844deg) translateY(-158px) rotate(-193.844deg)}
+.l9{transform:translate(-50%,-50%) rotate(221.536deg) translateY(-158px) rotate(-221.536deg)}
+.l10{transform:translate(-50%,-50%) rotate(249.228deg) translateY(-158px) rotate(-249.228deg)}
+.l11{transform:translate(-50%,-50%) rotate(276.92deg) translateY(-158px) rotate(-276.92deg)}
+.l12{transform:translate(-50%,-50%) rotate(304.612deg) translateY(-158px) rotate(-304.612deg)}
+.l13{transform:translate(-50%,-50%) rotate(332.304deg) translateY(-158px) rotate(-332.304deg)}
+.channel{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#031e16;border-radius:16px;padding:14px;margin-top:10px}
+.channel-name{font-weight:800;font-size:16px}
+.channel-link{background:#25e58a;color:#032116;padding:11px 16px;border-radius:12px;font-weight:900;text-decoration:none;white-space:nowrap}
+.empty{padding:18px;text-align:center;color:#9fbab1;background:#031e16;border-radius:15px}
+.refbox{background:#031e16;border-radius:16px;padding:14px;margin-top:15px}
+.ref-link{word-break:break-all;color:#bde8d9;font-size:14px;line-height:1.4}
+.copy-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.progress{height:12px;background:#23463b;border-radius:20px;overflow:hidden;margin:14px 0}
+.fill{height:100%;width:0;background:#25e58a;transition:.4s}
+.count{text-align:center;font-size:19px;font-weight:900}
+.small{text-align:center;color:#7f9e92;font-size:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="logo">🎰</div>
+  <h1>UZM BONUS RULETKA</h1>
+  <div class="subtitle">Ruletkani aylantiring va mukofotingizni aniqlang</div>
+</div>
+
+<!-- 1-QADAM -->
+<section class="screen active" id="screenSpin">
+  <div class="card">
+    <div class="title">💰 MUKOFOT MIQDORLARI</div>
+
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel">
+        <div class="label l1">100 000<br>SO‘M</div>
+        <div class="label l2">150 000<br>SO‘M</div>
+        <div class="label l3">200 000<br>SO‘M</div>
+        <div class="label l4">250 000<br>SO‘M</div>
+        <div class="label l5">300 000<br>SO‘M</div>
+        <div class="label l6">350 000<br>SO‘M</div>
+        <div class="label l7">400 000<br>SO‘M</div>
+        <div class="label l8">450 000<br>SO‘M</div>
+        <div class="label l9">500 000<br>SO‘M</div>
+        <div class="label l10">550 000<br>SO‘M</div>
+        <div class="label l11">600 000<br>SO‘M</div>
+        <div class="label l12">650 000<br>SO‘M</div>
+        <div class="label l13">700 000<br>SO‘M</div>
+        <div class="center">UZS</div>
+      </div>
+    </div>
+
+    <button class="btn" id="spinBtn" onclick="spin()">🎯 RULETKANI AYLANtirish</button>
+    <div id="spinError" class="error"></div>
+  </div>
+</section>
+
+<!-- 2-QADAM -->
+<section class="screen" id="screenResult">
+  <div class="card">
+    <div class="result-icon">🎉</div>
+    <div class="result-title">Tabriklaymiz!</div>
+    <div class="notice">Siz uchun aniqlangan mukofot:</div>
+    <div class="amount" id="resultAmount">0 so‘m</div>
+    <div class="notice">Mukofotingizni olish uchun quyidagi tugmani bosing.</div>
+    <button class="btn yellow" onclick="openChannels()">💰 PULNI OLISH</button>
+  </div>
+</section>
+
+<!-- 3-QADAM -->
+<section class="screen" id="screenChannels">
+  <div class="card">
+    <div class="title">📢 MAJBURIY KANAL</div>
+    <div class="notice">Aksiyada davom etish uchun quyidagi kanal(lar)ga kiring.</div>
+    <div id="channelList"></div>
+    <button class="btn" onclick="openReferral()">✅ DAVOM ETISH</button>
+    <div class="small">Obuna holati tekshirilmaydi.</div>
+  </div>
+</section>
+
+<!-- 4-QADAM -->
+<section class="screen" id="screenReferral">
+  <div class="card">
+    <div class="title">👥 DO‘STLARINGIZNI TAKLIF QILING</div>
+    <div class="notice">
+      Mukofotni olish uchun <b>10 ta yangi foydalanuvchini</b> taklif qiling.
+    </div>
+
+    <div class="progress"><div class="fill" id="refFill"></div></div>
+    <div class="count"><span id="refCount">0</span> / 10 ta taklif</div>
+
+    <div class="refbox">
+      <div class="notice" style="text-align:left;margin-bottom:7px">Sizning taklif havolangiz:</div>
+      <div class="ref-link" id="refLink">Yuklanmoqda...</div>
+    </div>
+
+    <div class="copy-row">
+      <button class="btn secondary" onclick="copyRef()">📋 NUSXA OLISH</button>
+      <button class="btn secondary" onclick="shareRef()">📤 ULASHISH</button>
+    </div>
+
+    <button class="btn" onclick="inviteFriends()">👥 DO‘STLARNI TAKLIF QILISH</button>
+
+    <button class="btn yellow" id="finalBtn" style="display:none" onclick="finalClaim()">
+      💰 MUKOFOTNI OLISH
+    </button>
+
+    <div id="refStatus" class="small"></div>
+  </div>
+</section>
+
+<div class="small">Aksiya shartlari server tomonidan boshqariladi.</div>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+const initData = tg?.initData || "";
+const BOT_USERNAME = "baraban_bonusbot";
+
+const PRIZES = [
+  100000,150000,200000,250000,300000,350000,400000,
+  450000,500000,550000,600000,650000,700000
+];
+
+let prize = 0;
+let referrals = 0;
+let spinning = false;
+let rotation = 0;
+let referralLink = "";
+
+async function ensureUser(){
+  if(!initData) return;
+  try{
+    await fetch("/api/user?initData="+encodeURIComponent(initData),{
+      cache:"no-store"
+    });
+  }catch(e){}
+}
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(x => x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+function money(n){
+  return Number(n).toLocaleString("uz-UZ").replace(/\u00A0/g," ") + " so‘m";
+}
+
+async function spin(){
+  if(spinning) return;
+
+  if(!initData){
+    document.getElementById("spinError").textContent =
+      "Mini App Telegram ichidan ochilishi kerak.";
+    return;
+  }
+
+  spinning = true;
+  const btn = document.getElementById("spinBtn");
+  const err = document.getElementById("spinError");
+  err.textContent = "";
+  btn.disabled = true;
+  btn.textContent = "⏳ Ruletka aylantirilmoqda...";
+
+  try{
+    const r = await fetch("/api/spin",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({initData})
+    });
+
+    const text = await r.text();
+    let d = {};
+    try{ d = JSON.parse(text); }catch(e){}
+
+    if(!r.ok) throw new Error(d.detail || "Ruletkani aylantirishda xatolik.");
+
+    prize = Number(d.prize || 0);
+    if(!prize) throw new Error("Server mukofot summasini qaytarmadi.");
+
+    const index = PRIZES.indexOf(prize);
+    const sector = 360 / PRIZES.length;
+    const target = index >= 0 ? index * sector + sector/2 : 0;
+
+    /*
+      Sektor markazini tepaga olib kelamiz.
+      Qo‘shimcha 6 aylanish animatsiya uchun.
+    */
+    const desired = 360 - target;
+    rotation += 360*6 + desired;
+    document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
+
+    setTimeout(()=>{
+      document.getElementById("resultAmount").textContent = money(prize);
+      showScreen("screenResult");
+      spinning = false;
+      btn.disabled = false;
+      btn.textContent = "🎯 RULETKANI AYLANtirish";
+      try{ tg?.HapticFeedback?.notificationOccurred("success"); }catch(e){}
+    },4900);
+
+  }catch(e){
+    spinning = false;
+    btn.disabled = false;
+    btn.textContent = "🎯 RULETKANI AYLANtirish";
+    err.textContent = e.message || "Xatolik yuz berdi.";
+  }
+}
+
+async function openChannels(){
+  showScreen("screenChannels");
+  const box = document.getElementById("channelList");
+  box.innerHTML = '<div class="empty">Kanallar yuklanmoqda...</div>';
+
+  try{
+    const r = await fetch("/api/channels?initData="+encodeURIComponent(initData),{
+      cache:"no-store"
+    });
+    const d = await r.json();
+
+    if(!r.ok) throw new Error(d.detail || "Kanallarni yuklashda xatolik.");
+
+    box.innerHTML = "";
+
+    if(!Array.isArray(d) || d.length === 0){
+      box.innerHTML = '<div class="empty">Hozircha admin tomonidan kanal qo‘shilmagan.</div>';
+      return;
+    }
+
+    d.forEach(c=>{
+      const row = document.createElement("div");
+      row.className = "channel";
+
+      const name = document.createElement("div");
+      name.className = "channel-name";
+      name.textContent = "📢 " + (c.title || "Kanal");
+
+      const a = document.createElement("a");
+      a.className = "channel-link";
+      a.textContent = "KIRISH";
+      a.href = c.link || "#";
+      a.target = "_blank";
+      a.rel = "noopener";
+
+      row.appendChild(name);
+      row.appendChild(a);
+      box.appendChild(row);
+    });
+
+  }catch(e){
+    box.innerHTML = '<div class="empty" style="color:#ff9a9a">Kanallarni yuklashda xatolik.</div>';
+  }
+}
+
+async function openReferral(){
+  showScreen("screenReferral");
+  await loadReferral();
+}
+
+async function loadReferral(){
+  try{
+    const r = await fetch("/api/referral?initData="+encodeURIComponent(initData),{
+      cache:"no-store"
+    });
+    const d = await r.json();
+
+    if(!r.ok) throw new Error(d.detail || "Referral ma’lumotlari olinmadi.");
+
+    referrals = Number(d.referrals || 0);
+    referralLink = d.ref_link || ("https://t.me/"+BOT_USERNAME+"?start=ref_"+(tg?.initDataUnsafe?.user?.id || ""));
+
+    document.getElementById("refCount").textContent = referrals;
+    document.getElementById("refFill").style.width = Math.min(referrals,10)*10 + "%";
+    document.getElementById("refLink").textContent = referralLink;
+
+    if(referrals >= 10){
+      document.getElementById("finalBtn").style.display = "block";
+      document.getElementById("refStatus").textContent = "✅ 10 ta taklif bajarildi.";
+    }else{
+      document.getElementById("finalBtn").style.display = "none";
+      document.getElementById("refStatus").textContent =
+        "Yana " + (10-referrals) + " ta taklif kerak.";
+    }
+  }catch(e){
+    document.getElementById("refLink").textContent = "Referral havola olinmadi.";
+    document.getElementById("refStatus").textContent = e.message || "Xatolik.";
+  }
+}
+
+function copyRef(){
+  if(!referralLink) return;
+  navigator.clipboard?.writeText(referralLink)
+    .then(()=>{ document.getElementById("refStatus").textContent="✅ Havola nusxalandi."; })
+    .catch(()=>{ document.getElementById("refStatus").textContent="Havolani qo‘lda nusxalang."; });
+}
+
+function shareRef(){
+  if(!referralLink) return;
+
+  const shareUrl =
+    "https://t.me/share/url?url="+encodeURIComponent(referralLink)+
+    "&text="+encodeURIComponent("🎁 Aksiyada qatnashing! Botga kirib ruletkani aylantiring.");
+
+  if(tg?.openTelegramLink){
+    tg.openTelegramLink(shareUrl);
+  }else{
+    window.open(shareUrl,"_blank");
+  }
+}
+
+function inviteFriends(){
+  shareRef();
+}
+
+async function finalClaim(){
+  await loadReferral();
+
+  if(referrals < 10){
+    document.getElementById("refStatus").textContent =
+      "❌ Avval 10 ta yangi foydalanuvchini taklif qiling.";
+    return;
+  }
+
+  document.getElementById("refStatus").textContent =
+    "✅ 10 ta taklif bajarildi. Mukofot olish uchun botdagi to‘lov tartibi qo‘llanadi.";
+}
+
+/*
+  Muhim:
+  Mini App ochilganda DOIMO 1-qadam — RU­LETKA ko‘rinadi.
+  Oldingi prize bor bo‘lsa ham frontend avtomatik natija oynasiga sakramaydi.
+*/
+ensureUser();
+showScreen("screenSpin");
+</script>
+</body>
+</html>
