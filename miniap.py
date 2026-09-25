@@ -1151,7 +1151,7 @@ async def run_api():
     config = uvicorn.Config(
         app,
         host="0.0.0.0",
-        port=8080,
+        port=int(os.getenv("PORT", "8080")),
         log_level="info"
     )
 
