@@ -1473,26 +1473,6 @@ async function spin(){
 
     try{
 
-        /*
-          AVVAL SERVERDAN OBUNANI TEKSHIRAMIZ.
-          Agar obuna bo'lmasa ruletka aylanmaydi.
-        */
-
-        const sub =
-            await checkRealSubscription();
-
-        if(!sub){
-
-            await openChannels();
-
-            spinning = false;
-            btn.disabled = false;
-            btn.textContent =
-                "🎯 RULETKANI AYLANtirish";
-
-            return;
-        }
-
 
         /*
           SERVERDAN MUKOFOTNI OLAMIZ.
