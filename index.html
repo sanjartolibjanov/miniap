@@ -581,9 +581,9 @@ h1{
 
     <div class="logo">💜</div>
 
-    <h1>UZUM BONUS RULETKA</h1>
+    <h1 id="mainTitle">UZUM BONUS RULETKA</h1>
 
-    <div class="subtitle">
+    <div class="subtitle" id="mainSubtitle">
         Ruletkani aylantiring va mukofotingizni aniqlang
     </div>
 
@@ -1021,6 +1021,28 @@ function setResultAmount(value){
 }
 
 
+function setPrizeHeader(value){
+
+    const formatted = money(value);
+
+    const title =
+        document.getElementById("mainTitle");
+
+    const subtitle =
+        document.getElementById("mainSubtitle");
+
+    if(title){
+        title.textContent =
+            "🎉 Sizga " + formatted + " tushdi!";
+    }
+
+    if(subtitle){
+        subtitle.textContent =
+            "💰 Pulni olish uchun UZUM BONUS BARABAN botga 10 ta do‘stingizni taklif qiling — ular ham foyda olsin!";
+    }
+}
+
+
 
 
 /* =========================
@@ -1157,6 +1179,7 @@ async function loadInitialState(){
         if(prize > 0){
 
             setResultAmount(prize);
+            setPrizeHeader(prize);
 
 
             /*
@@ -1632,13 +1655,8 @@ async function spin(){
         setTimeout(
             async () => {
 
-                document
-                    .getElementById(
-                        "resultAmount"
-                    )
-                    .textContent =
-                    money(prize);
-
+                setResultAmount(prize);
+                setPrizeHeader(prize);
 
                 showScreen(
                     "screenResult"
