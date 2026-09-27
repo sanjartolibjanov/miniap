@@ -944,6 +944,54 @@ function money(n){
 }
 
 
+
+/* =========================
+   REAL SUBSCRIPTION CHECK
+   AVVAL SERVERDAN TEKSHIRISH
+========================= */
+
+async function checkRealSubscription(){
+
+    if(!initData){
+        return false;
+    }
+
+    try{
+
+        const r = await fetch(
+            "/api/claim-status",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                cache:"no-store",
+                body:JSON.stringify({
+                    initData
+                })
+            }
+        );
+
+        if(!r.ok){
+            return false;
+        }
+
+        const d = await r.json();
+
+        return d.all_subscribed === true;
+
+    }catch(e){
+
+        console.log(
+            "Subscription check error:",
+            e
+        );
+
+        return false;
+    }
+}
+
+
 /* =========================
    USER STATE
 ========================= */
@@ -960,11 +1008,15 @@ async function loadInitialState(){
             "Mini App Telegram ichidan ochilishi kerak.";
 
         return;
-
     }
 
 
     try{
+
+        /*
+          HAR SAFAR MINI APP OCHILGANDA
+          SERVERDAN ENG YANGI HOLATNI OLAMIZ.
+        */
 
         const r =
             await fetch(
@@ -1010,9 +1062,18 @@ async function loadInitialState(){
 
 
         /*
-          MUHIM:
-          Mukofot BOR bo‘lsa,
-          ruletka qayta aylanmaydi.
+          SERVERDAN QAYTA OBUNANI TEKSHIRAMIZ.
+          SHU SABABLI ADMIN YANGI KANAL QO'SHSA,
+          YANGI KANAL HAM HISOBGA OLINGADI.
+        */
+
+        const subscribed =
+            await checkRealSubscription();
+
+
+        /*
+          MUKOFOT SAQLANGAN BO'LSA
+          QAYTA RULETKA AYLANMAYDI.
         */
 
         if(prize > 0){
@@ -1023,39 +1084,48 @@ async function loadInitialState(){
                 money(prize);
 
 
-            showScreen("screenResult");
+            /*
+              HAMMA KANALGA OBUNA BO'LSA
+              MAJBURIY OBUNA OYNASI KO'RINMAYDI.
+            */
+
+            if(subscribed){
+
+                await goReferral();
+
+                return;
+            }
 
 
             /*
-              Natija oynasi ko‘rsatilgandan
-              keyin server obunani tekshiradi.
+              FAQAT OBUNA YETISHMAGANDA
+              KANAL OYNASINI KO'RSATAMIZ.
             */
 
-            setTimeout(
-                () => continueAfterPrize(),
-                900
-            );
+            await openChannels();
 
             return;
-
         }
 
 
         /*
-          Mukofot YO‘Q.
-
-          Avval obunani tekshiramiz.
+          MUKOFOT HALI YO'Q.
+          OBUNA BOR BO'LSA TO'G'RIDAN-TO'G'RI RULETKA.
         */
 
-        if(d.all_subscribed){
+        if(subscribed){
 
             showScreen("screenSpin");
 
-        }else{
-
-            await openChannels();
-
+            return;
         }
+
+
+        /*
+          OBUNA YETISHMAYAPTI.
+        */
+
+        await openChannels();
 
     }catch(e){
 
@@ -1073,271 +1143,41 @@ async function loadInitialState(){
 
 
 /* =========================
-   SPIN
-========================= */
-
-async function spin(){
-
-    if(spinning)
-        return;
-
-
-    if(!initData){
-
-        document
-            .getElementById("spinError")
-            .textContent =
-            "Mini App Telegram ichidan ochilishi kerak.";
-
-        return;
-
-    }
-
-
-    /*
-      Xavfsizlik uchun:
-
-      Ruletka bosilishidan oldin
-      obunani yana serverdan tekshiramiz.
-    */
-
-    try{
-
-        const sr =
-            await fetch(
-                "/api/subscription?initData="
-                +
-                encodeURIComponent(initData),
-                {
-                    cache:"no-store"
-                }
-            );
-
-
-        const sd =
-            await sr.json();
-
-
-        if(
-            !sr.ok ||
-            !sd.all_subscribed
-        ){
-
-            await openChannels();
-
-            return;
-
-        }
-
-    }catch(e){
-
-        document
-            .getElementById("spinError")
-            .textContent =
-            "Obuna holatini tekshirib bo‘lmadi.";
-
-        return;
-
-    }
-
-
-    spinning = true;
-
-
-    const btn =
-        document.getElementById(
-            "spinBtn"
-        );
-
-
-    const err =
-        document.getElementById(
-            "spinError"
-        );
-
-
-    err.textContent = "";
-
-    btn.disabled = true;
-
-    btn.textContent =
-        "⏳ Ruletka aylantirilmoqda...";
-
-
-    try{
-
-        const r =
-            await fetch(
-                "/api/spin",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                        "application/json"
-                    },
-
-                    cache:"no-store",
-
-                    body:
-                        JSON.stringify({
-                            initData
-                        })
-                }
-            );
-
-
-        const text =
-            await r.text();
-
-
-        let d = {};
-
-        try{
-            d = JSON.parse(text);
-        }catch(e){}
-
-
-        if(!r.ok){
-
-            throw new Error(
-                d.detail ||
-                text ||
-                "Ruletkani aylantirishda xatolik."
-            );
-
-        }
-
-
-        /*
-          Agar server obuna talab qilsa.
-        */
-
-        if(
-            d.stage === "subscription"
-        ){
-
-            await openChannels();
-
-            return;
-
-        }
-
-
-        prize =
-            Number(d.prize || 0);
-
-
-        if(!prize){
-
-            throw new Error(
-                "Server mukofot summasini qaytarmadi."
-            );
-
-        }
-
-
-        const index =
-            PRIZES.indexOf(prize);
-
-
-        const sector =
-            360 / PRIZES.length;
-
-
-        const target =
-            index >= 0
-                ? index * sector + sector/2
-                : 0;
-
-
-        const desired =
-            360 - target;
-
-
-        rotation +=
-            360 * 6 +
-            desired;
-
-
-        document
-            .getElementById("wheel")
-            .style.transform =
-            `rotate(${rotation}deg)`;
-
-
-        setTimeout(
-
-            () => {
-
-                document
-                    .getElementById(
-                        "resultAmount"
-                    )
-                    .textContent =
-                    money(prize);
-
-
-                showScreen(
-                    "screenResult"
-                );
-
-
-                spinning = false;
-
-                btn.disabled = false;
-
-                btn.textContent =
-                    "🎯 RULETKANI AYLANtirish";
-
-
-                try{
-
-                    tg?.HapticFeedback
-                        ?.notificationOccurred(
-                            "success"
-                        );
-
-                }catch(e){}
-
-            },
-
-            4900
-
-        );
-
-
-    }catch(e){
-
-        spinning = false;
-
-        btn.disabled = false;
-
-        btn.textContent =
-            "🎯 RULETKANI AYLANtirish";
-
-
-        err.textContent =
-            e.message ||
-            "Xatolik yuz berdi.";
-
-    }
-
-}
-
-
-/* =========================
    RESULT -> NEXT
 ========================= */
 
 async function continueAfterPrize(){
 
     if(!prize){
-
         return;
-
     }
 
+
+    /*
+      PULNI OLISHDAN OLDIN HAM
+      ENG YANGI OBUNA HOLATINI TEKSHIRAMIZ.
+    */
+
+    const subscribed =
+        await checkRealSubscription();
+
+
+    if(subscribed){
+
+        /*
+          HAMMA KANALGA OBUNA BO'LGAN.
+          OBUNA OYNASI OCHILMAYDI.
+        */
+
+        await goReferral();
+
+        return;
+    }
+
+
+    /*
+      KAMIDA BITTA KANALGA OBUNA YO'Q.
+    */
 
     await openChannels();
 
@@ -1349,6 +1189,42 @@ async function continueAfterPrize(){
 ========================= */
 
 async function openChannels(){
+
+    /*
+      KANAL OYNASINI KO'RSATISHDAN OLDIN
+      AVVAL YANA SERVERDAN TEKSHIRAMIZ.
+    */
+
+    const subscribed =
+        await checkRealSubscription();
+
+
+    /*
+      AGAR ALLAQACHON HAMMA KANALGA
+      OBUNA BO'LGAN BO'LSA,
+      BU OYNA UMUMAN KO'RINMAYDI.
+    */
+
+    if(subscribed){
+
+        if(prize > 0){
+
+            await goReferral();
+
+        }else{
+
+            showScreen("screenSpin");
+
+        }
+
+        return;
+    }
+
+
+    /*
+      FAQAT HAQIQATAN OBUNA YETISHMAGANDA
+      KANAL OYNASINI OCHAMIZ.
+    */
 
     showScreen(
         "screenChannels"
@@ -1378,7 +1254,11 @@ async function openChannels(){
             await fetch(
                 "/api/channels?initData="
                 +
-                encodeURIComponent(initData),
+                encodeURIComponent(initData)
+                +
+                "&t="
+                +
+                Date.now(),
                 {
                     cache:"no-store"
                 }
@@ -1407,16 +1287,19 @@ async function openChannels(){
             d.length === 0
         ){
 
-            /*
-              Kanal yo‘q bo‘lsa
-              obuna bosqichini tashlab
-              referralga o'tamiz.
-            */
+            if(prize > 0){
 
-            await goReferral();
+                await goReferral();
+
+            }else{
+
+                showScreen(
+                    "screenSpin"
+                );
+
+            }
 
             return;
-
         }
 
 
@@ -1427,6 +1310,7 @@ async function openChannels(){
                     "div"
                 );
 
+
             row.className =
                 "channel";
 
@@ -1436,8 +1320,10 @@ async function openChannels(){
                     "div"
                 );
 
+
             name.className =
                 "channel-name";
+
 
             name.textContent =
                 "📢 "
@@ -1450,8 +1336,10 @@ async function openChannels(){
                     "a"
                 );
 
+
             a.className =
                 "channel-link";
+
 
             a.textContent =
                 "KIRISH";
@@ -1492,7 +1380,7 @@ async function openChannels(){
 
 
 /* =========================
-   REAL SUBSCRIPTION CHECK
+   REAL SUBSCRIPTION CHECK BUTTON
 ========================= */
 
 async function checkSubscription(){
