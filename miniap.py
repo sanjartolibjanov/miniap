@@ -21,6 +21,7 @@ from aiogram.types import (
     InlineKeyboardButton,
     WebAppInfo,
     CallbackQuery,
+    ChatJoinRequest,
 )
 
 import uvicorn
@@ -97,6 +98,15 @@ def init_db():
         CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
             value TEXT DEFAULT ''
+        )
+    """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS join_requests (
+            chat_id TEXT NOT NULL,
+            user_id INTEGER NOT NULL,
+            requested_at INTEGER NOT NULL,
+            PRIMARY KEY(chat_id, user_id)
         )
     """)
 
@@ -265,6 +275,30 @@ bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
 
+@dp.chat_join_request()
+async def handle_chat_join_request(request: ChatJoinRequest):
+    """Telegramdagi kanalga yuborilgan zayavkani ichdan qayd qiladi."""
+    try:
+        conn = db()
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO join_requests(
+                chat_id, user_id, requested_at
+            )
+            VALUES(?, ?, ?)
+            """,
+            (
+                str(request.chat.id),
+                int(request.from_user.id),
+                int(time.time()),
+            )
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("JOIN REQUEST ERROR:", e)
+
+
 def main_keyboard():
     buttons = [[
         InlineKeyboardButton(
@@ -397,10 +431,10 @@ async def broadcast_start(call: CallbackQuery):
     await call.message.answer(
         "📢 REKLAMA TARQATISH\n\n"
         f"👥 Jami foydalanuvchilar: {total} ta\n\n"
-        "Reklama matnini yuboring.\n\n"
-        "Masalan:\n"
-        "🔥 Yangi aksiya boshlandi!\n"
-        "🎯 Aksiyada qatnashing va bonusni qo'lga kiriting!"
+        "1️⃣ Reklama matnini yoki RASM + MATNNI yuboring.\n"
+        "2️⃣ Keyin tugma kerak bo'lsa quyidagi formatda yuboring:\n"
+        "Tugma nomi | https://t.me/...\n\n"
+        "Tugma kerak bo'lmasa: YO'Q deb yuboring."
     )
 
     await call.answer()
@@ -549,25 +583,118 @@ async def admin_text_handler(message: Message):
     # REKLAMA TARQATISH
     # =====================================================
 
+    # 1-qadam: matn yoki rasm + caption qabul qilish
     if setting(f"waiting_broadcast_{admin_id}") == "1":
 
-        if not text:
+        if message.photo:
+            photo = message.photo[-1]
+            draft = {
+                "type": "photo",
+                "file_id": photo.file_id,
+                "caption": message.caption or "",
+            }
+
+        elif text:
+            draft = {
+                "type": "text",
+                "text": text,
+            }
+
+        else:
             await message.answer(
-                "❌ Reklama matni bo'sh bo'lmasligi kerak."
+                "❌ Reklama uchun matn yoki rasm yuboring."
             )
             return
 
         set_setting(
+            f"broadcast_draft_{admin_id}",
+            json.dumps(draft, ensure_ascii=False)
+        )
+        set_setting(
             f"waiting_broadcast_{admin_id}",
             "0"
         )
+        set_setting(
+            f"waiting_broadcast_button_{admin_id}",
+            "1"
+        )
+
+        await message.answer(
+            "✅ Reklama saqlandi.\n\n"
+            "🔘 Tugma qo'shmoqchi bo'lsangiz:\n"
+            "Tugma nomi | https://t.me/...\n\n"
+            "Masalan:\n"
+            "🎯 AKSIYADA QATNASHISH | https://t.me/kanal\n\n"
+            "Tugma kerak bo'lmasa: YO'Q"
+        )
+        return
+
+    # 2-qadam: ixtiyoriy inline tugma
+    if setting(f"waiting_broadcast_button_{admin_id}") == "1":
+
+        button_text = ""
+        button_url = ""
+
+        if text.upper() not in {"YO'Q", "YOQ", "NO", "NONE"}:
+            if "|" not in text:
+                await message.answer(
+                    "❌ Format noto'g'ri.\n\n"
+                    "Tugma nomi | https://t.me/...\n\n"
+                    "Yoki tugmasiz yuborish uchun: YO'Q"
+                )
+                return
+
+            button_text, button_url = [
+                x.strip()
+                for x in text.split("|", 1)
+            ]
+
+            if not button_text or not (
+                button_url.startswith("https://")
+                or button_url.startswith("http://")
+            ):
+                await message.answer(
+                    "❌ Tugma ma'lumotlari noto'g'ri.\n\n"
+                    "Masalan:\n"
+                    "🎯 AKSIYADA QATNASHISH | https://t.me/kanal"
+                )
+                return
+
+        draft_raw = setting(f"broadcast_draft_{admin_id}")
+        try:
+            draft = json.loads(draft_raw)
+        except Exception:
+            set_setting(f"waiting_broadcast_button_{admin_id}", "0")
+            set_setting(f"broadcast_draft_{admin_id}", "")
+            await message.answer(
+                "❌ Reklama ma'lumoti topilmadi. Reklamani qaytadan boshlang."
+            )
+            return
+
+        reply_markup = None
+        if button_text and button_url:
+            reply_markup = InlineKeyboardMarkup(
+                inline_keyboard=[[
+                    InlineKeyboardButton(
+                        text=button_text,
+                        url=button_url
+                    )
+                ]]
+            )
+
+        set_setting(
+            f"waiting_broadcast_button_{admin_id}",
+            "0"
+        )
+        set_setting(
+            f"broadcast_draft_{admin_id}",
+            ""
+        )
 
         conn = db()
-
         users = conn.execute(
             "SELECT user_id FROM users"
         ).fetchall()
-
         conn.close()
 
         total = len(users)
@@ -583,10 +710,19 @@ async def admin_text_handler(message: Message):
             user_id = row["user_id"]
 
             try:
-                await bot.send_message(
-                    chat_id=user_id,
-                    text=text
-                )
+                if draft.get("type") == "photo":
+                    await bot.send_photo(
+                        chat_id=user_id,
+                        photo=draft["file_id"],
+                        caption=draft.get("caption", ""),
+                        reply_markup=reply_markup
+                    )
+                else:
+                    await bot.send_message(
+                        chat_id=user_id,
+                        text=draft.get("text", ""),
+                        reply_markup=reply_markup
+                    )
 
                 delivered += 1
 
@@ -601,7 +737,6 @@ async def admin_text_handler(message: Message):
             f"✅ Yetkazildi: {delivered} ta\n"
             f"❌ Yetkazilmadi: {failed} ta"
         )
-
         return
 
     # =====================================================
@@ -1159,11 +1294,34 @@ async def get_subscription_status(user_id: int):
         except Exception:
             subscribed = False
 
+        join_request = False
+
+        if not subscribed:
+            conn = db()
+            pending = conn.execute(
+                """
+                SELECT 1
+                FROM join_requests
+                WHERE chat_id=? AND user_id=?
+                LIMIT 1
+                """,
+                (
+                    str(row["chat_id"]),
+                    user_id
+                )
+            ).fetchone()
+            conn.close()
+
+            if pending:
+                join_request = True
+                subscribed = True
+
         results.append({
             "id": row["chat_id"],
             "title": row["title"],
             "link": row["invite_link"] or "",
-            "subscribed": subscribed
+            "subscribed": subscribed,
+            "join_request": join_request
         })
 
     return {
@@ -1576,7 +1734,8 @@ async def run_bot():
     print("🤖 BOT ISHLAYAPTI!")
 
     await dp.start_polling(
-        bot
+        bot,
+        allowed_updates=dp.resolve_used_update_types()
     )
 
 
