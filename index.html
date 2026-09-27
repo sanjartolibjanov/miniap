@@ -515,6 +515,52 @@ h1{
     color:#fff;
 }
 
+
+.ref-summary{
+    margin-top:16px;
+    display:grid;
+    gap:10px;
+}
+.ref-stat{
+    border-radius:15px;
+    padding:13px 15px;
+    font-weight:900;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.ref-stat.green{
+    background:rgba(90,255,90,.12);
+    border:1px solid rgba(140,255,110,.45);
+    color:#cfff8a;
+}
+.ref-stat.red{
+    background:rgba(255,50,50,.12);
+    border:1px solid rgba(255,100,100,.5);
+    color:#ff9b9b;
+}
+.ref-users{
+    margin-top:10px;
+    max-height:180px;
+    overflow:auto;
+}
+.ref-user{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 11px;
+    border-radius:11px;
+    margin-top:7px;
+    font-size:13px;
+    background:rgba(0,0,0,.18);
+}
+.ref-user.red{
+    color:#ff9b9b;
+}
+.ref-user.green{
+    color:#cfff8a;
+}
+
 .small{
     text-align:center;
 
@@ -679,7 +725,9 @@ h1{
     </div>
 
     <div class="notice">
-        Mukofotingizni olish uchun davom eting.
+        Pulni olish uchun <b>UZUM BONUS BARABAN</b> botga
+        <b>10 ta do‘stingizni</b> taklif qiling.<br>
+        Ular ham foyda olsin!
     </div>
 
     <button
@@ -755,10 +803,12 @@ h1{
         Mukofotni olish uchun
 
         <b>
-            10 ta yangi foydalanuvchini
+            10 ta do‘stingizni
         </b>
 
-        taklif qiling.
+        taklif qiling.<br>
+        <span style="color:#cfff8a">🟢 Kanalga obuna bo‘lganlar hisoblanadi.</span><br>
+        <span style="color:#ff9b9b">🔴 Obuna bo‘lmaganlar hisoblanmaydi.</span>
 
     </div>
 
@@ -783,6 +833,20 @@ h1{
 
     </div>
 
+
+    <div class="ref-summary">
+        <div class="ref-stat green">
+            <span>🟢 Hisoblangan takliflar</span>
+            <span id="qualifiedRefCount">0 / 10</span>
+        </div>
+
+        <div class="ref-stat red">
+            <span>🔴 Kanalga obuna bo‘lmaganlar</span>
+            <span id="unqualifiedRefCount">0 ta</span>
+        </div>
+    </div>
+
+    <div class="ref-users" id="refUsers"></div>
 
     <div class="refbox">
 
@@ -1719,6 +1783,87 @@ async function goReferral(){
 }
 
 
+
+function renderReferralUsers(d){
+
+    const qualified =
+        Array.isArray(d.qualified_users)
+            ? d.qualified_users
+            : [];
+
+    const unqualified =
+        Array.isArray(d.unqualified_users)
+            ? d.unqualified_users
+            : [];
+
+    const qualifiedEl =
+        document.getElementById("qualifiedRefCount");
+
+    const unqualifiedEl =
+        document.getElementById("unqualifiedRefCount");
+
+    const usersEl =
+        document.getElementById("refUsers");
+
+    if(qualifiedEl){
+        qualifiedEl.textContent =
+            Math.min(
+                Number(d.qualified_referrals || 0),
+                10
+            )
+            + " / 10";
+    }
+
+    if(unqualifiedEl){
+        unqualifiedEl.textContent =
+            Number(d.unqualified_referrals || 0)
+            + " ta";
+    }
+
+    if(!usersEl){
+        return;
+    }
+
+    usersEl.innerHTML = "";
+
+    unqualified.forEach((u, i) => {
+        const row = document.createElement("div");
+        row.className = "ref-user red";
+
+        const name =
+            u.first_name ||
+            u.username ||
+            ("Foydalanuvchi " + (i + 1));
+
+        row.innerHTML =
+            "<span>🔴 " +
+            name +
+            "</span>" +
+            "<span>Obuna yo‘q</span>";
+
+        usersEl.appendChild(row);
+    });
+
+    qualified.forEach((u, i) => {
+        const row = document.createElement("div");
+        row.className = "ref-user green";
+
+        const name =
+            u.first_name ||
+            u.username ||
+            ("Foydalanuvchi " + (i + 1));
+
+        row.innerHTML =
+            "<span>🟢 " +
+            name +
+            "</span>" +
+            "<span>Hisoblandi</span>";
+
+        usersEl.appendChild(row);
+    });
+
+}
+
 async function loadReferral(){
 
     try{
@@ -1750,9 +1895,12 @@ async function loadReferral(){
 
         referrals =
             Number(
-                d.referrals || 0
+                d.qualified_referrals ??
+                d.referrals ??
+                0
             );
 
+        renderReferralUsers(d);
 
         referralLink =
             d.ref_link ||
@@ -1980,7 +2128,7 @@ async function finalClaim(){
                 "refStatus"
             )
             .textContent =
-            "❌ Avval 10 ta yangi foydalanuvchini taklif qiling.";
+            "❌ Hali 10 ta obuna bo‘lgan taklif bajarilmagan.";
 
         return;
 
