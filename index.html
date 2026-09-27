@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>UZM BONUS RULETKA</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:#001b12;color:#fff;font-family:Arial,sans-serif}
@@ -75,12 +76,13 @@ overflow:hidden}
 .small{text-align:center;color:#7f9e92;font-size:12px;margin-top:18px}
 </style>
 </head>
+
 <body>
 <div class="app">
 
 <div class="header">
   <div class="logo">🎰</div>
-  <h1>UZM BONUS RULETKA</h1>
+  <h1>Uzum Bank BONUS RULETKA</h1>
   <div class="subtitle">Ruletkani aylantiring va mukofotingizni aniqlang</div>
 </div>
 
@@ -91,7 +93,9 @@ overflow:hidden}
 
     <div class="wheel-wrap">
       <div class="pointer"></div>
+
       <div class="wheel" id="wheel">
+
         <div class="label l1">100 000<br>SO‘M</div>
         <div class="label l2">150 000<br>SO‘M</div>
         <div class="label l3">200 000<br>SO‘M</div>
@@ -105,83 +109,186 @@ overflow:hidden}
         <div class="label l11">600 000<br>SO‘M</div>
         <div class="label l12">650 000<br>SO‘M</div>
         <div class="label l13">700 000<br>SO‘M</div>
+
         <div class="center">UZS</div>
+
       </div>
     </div>
 
-    <button class="btn" id="spinBtn" onclick="spin()">🎯 RULETKANI AYLANtirish</button>
+    <button class="btn" id="spinBtn" onclick="spin()">
+      uzum bank RULETKANI AYLANtirish
+    </button>
+
     <div id="spinError" class="error"></div>
   </div>
 </section>
 
+
 <!-- 2-QADAM -->
 <section class="screen" id="screenResult">
   <div class="card">
+
     <div class="result-icon">🎉</div>
-    <div class="result-title">Tabriklaymiz!</div>
-    <div class="notice">Siz uchun aniqlangan mukofot:</div>
-    <div class="amount" id="resultAmount">0 so‘m</div>
-    <div class="notice">Mukofotingizni olish uchun quyidagi tugmani bosing.</div>
-    <button class="btn yellow" onclick="openChannels()">💰 PULNI OLISH</button>
+
+    <div class="result-title">
+      Tabriklaymiz!
+    </div>
+
+    <div class="notice">
+      Siz uchun aniqlangan mukofot:
+    </div>
+
+    <div class="amount" id="resultAmount">
+      0 so‘m
+    </div>
+
+    <div class="notice">
+      Mukofotingizni olish uchun quyidagi tugmani bosing.
+    </div>
+
+    <button class="btn yellow" onclick="openChannels()">
+      💰 PULNI OLISH
+    </button>
+
   </div>
 </section>
+
 
 <!-- 3-QADAM -->
 <section class="screen" id="screenChannels">
   <div class="card">
-    <div class="title">📢 MAJBURIY KANAL</div>
-    <div class="notice">Aksiyada davom etish uchun quyidagi kanal(lar)ga kiring.</div>
+
+    <div class="title">
+      📢 MAJBURIY KANAL
+    </div>
+
+    <div class="notice">
+      Aksiyada davom etish uchun quyidagi kanal(lar)ga kiring.
+    </div>
+
     <div id="channelList"></div>
-    <button class="btn" onclick="openReferral()">✅ DAVOM ETISH</button>
-    <div class="small">Obuna holati tekshirilmaydi.</div>
+
+    <button class="btn" onclick="openReferral()">
+      ✅ DAVOM ETISH
+    </button>
+
+    <div class="small">
+      Obuna holati tekshiriladi.
+    </div>
+
   </div>
 </section>
+
 
 <!-- 4-QADAM -->
 <section class="screen" id="screenReferral">
   <div class="card">
-    <div class="title">👥 DO‘STLARINGIZNI TAKLIF QILING</div>
-    <div class="notice">
-      Mukofotni olish uchun <b>10 ta yangi foydalanuvchini</b> taklif qiling.
+
+    <div class="title">
+      👥 DO‘STLARINGIZNI TAKLIF QILING
     </div>
 
-    <div class="progress"><div class="fill" id="refFill"></div></div>
-    <div class="count"><span id="refCount">0</span> / 10 ta taklif</div>
+    <div class="notice">
+      Mukofotni olish uchun
+      <b>10 ta yangi foydalanuvchini</b>
+      taklif qiling.
+    </div>
+
+    <div class="progress">
+      <div class="fill" id="refFill"></div>
+    </div>
+
+    <div class="count">
+      <span id="refCount">0</span> / 10 ta taklif
+    </div>
+
 
     <div class="refbox">
-      <div class="notice" style="text-align:left;margin-bottom:7px">Sizning taklif havolangiz:</div>
-      <div class="ref-link" id="refLink">Yuklanmoqda...</div>
+
+      <div class="notice"
+           style="text-align:left;margin-bottom:7px">
+        Sizning taklif havolangiz:
+      </div>
+
+      <div class="ref-link" id="refLink">
+        Yuklanmoqda...
+      </div>
+
     </div>
+
 
     <div class="copy-row">
-      <button class="btn secondary" onclick="copyRef()">📋 NUSXA OLISH</button>
-      <button class="btn secondary" onclick="shareRef()">📤 ULASHISH</button>
+
+      <button class="btn secondary" onclick="copyRef()">
+        📋 NUSXA OLISH
+      </button>
+
+      <button class="btn secondary" onclick="shareRef()">
+        📤 ULASHISH
+      </button>
+
     </div>
 
-    <button class="btn" onclick="inviteFriends()">👥 DO‘STLARNI TAKLIF QILISH</button>
 
-    <button class="btn yellow" id="finalBtn" style="display:none" onclick="finalClaim()">
+    <button class="btn" onclick="inviteFriends()">
+      👥 DO‘STLARNI TAKLIF QILISH
+    </button>
+
+
+    <button
+      class="btn yellow"
+      id="finalBtn"
+      style="display:none"
+      onclick="finalClaim()"
+    >
       💰 MUKOFOTNI OLISH
     </button>
 
+
     <div id="refStatus" class="small"></div>
+
   </div>
 </section>
 
-<div class="small">Aksiya shartlari server tomonidan boshqariladi.</div>
+
+<div class="small">
+  Aksiya shartlari server tomonidan boshqariladi.
 </div>
 
+</div>
+
+
 <script>
+
 const tg = window.Telegram?.WebApp;
-if (tg) { tg.ready(); tg.expand(); }
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
+
 
 const initData = tg?.initData || "";
+
 const BOT_USERNAME = "baraban_bonusbot";
 
+
 const PRIZES = [
-  100000,150000,200000,250000,300000,350000,400000,
-  450000,500000,550000,600000,650000,700000
+  100000,
+  150000,
+  200000,
+  250000,
+  300000,
+  350000,
+  400000,
+  450000,
+  500000,
+  550000,
+  600000,
+  650000,
+  700000
 ];
+
 
 let prize = 0;
 let referrals = 0;
@@ -189,211 +296,1028 @@ let spinning = false;
 let rotation = 0;
 let referralLink = "";
 
+
+/* =========================
+   USER
+========================= */
+
 async function ensureUser(){
+
   if(!initData) return;
+
   try{
-    await fetch("/api/user?initData="+encodeURIComponent(initData),{
-      cache:"no-store"
-    });
+
+    await fetch(
+      "/api/user?initData="+encodeURIComponent(initData),
+      {
+        cache:"no-store"
+      }
+    );
+
   }catch(e){}
+
 }
+
+
+/* =========================
+   SCREEN
+========================= */
 
 function showScreen(id){
-  document.querySelectorAll(".screen").forEach(x => x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(x => x.classList.remove("active"));
+
+  const screen =
+    document.getElementById(id);
+
+  if(screen){
+    screen.classList.add("active");
+  }
+
   window.scrollTo(0,0);
+
 }
+
+
+/* =========================
+   MONEY
+========================= */
 
 function money(n){
-  return Number(n).toLocaleString("uz-UZ").replace(/\u00A0/g," ") + " so‘m";
+
+  return Number(n)
+    .toLocaleString("uz-UZ")
+    .replace(/\u00A0/g," ")
+    + " so‘m";
+
 }
 
-async function spin(){
-  if(spinning) return;
+
+/* =========================
+   SERVER STATUS
+========================= */
+
+async function getClaimStatus(){
 
   if(!initData){
-    document.getElementById("spinError").textContent =
+
+    throw new Error(
+      "Mini App Telegram ichidan ochilishi kerak."
+    );
+
+  }
+
+
+  const r = await fetch(
+    "/api/claim-status?initData="+
+    encodeURIComponent(initData),
+    {
+      cache:"no-store"
+    }
+  );
+
+
+  const text =
+    await r.text();
+
+
+  let d = {};
+
+  try{
+
+    d = JSON.parse(text);
+
+  }catch(e){}
+
+
+  if(!r.ok){
+
+    throw new Error(
+      d.detail ||
+      "Holatni tekshirishda xatolik."
+    );
+
+  }
+
+
+  return d;
+
+}
+
+
+/* =========================
+   APP START
+========================= */
+
+async function startApp(){
+
+  if(!initData){
+
+    showScreen("screenSpin");
+
+    document.getElementById(
+      "spinError"
+    ).textContent =
       "Mini App Telegram ichidan ochilishi kerak.";
+
     return;
   }
 
-  spinning = true;
-  const btn = document.getElementById("spinBtn");
-  const err = document.getElementById("spinError");
-  err.textContent = "";
-  btn.disabled = true;
-  btn.textContent = "⏳ Ruletka aylantirilmoqda...";
 
   try{
-    const r = await fetch("/api/spin",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({initData})
-    });
 
-    const text = await r.text();
-    let d = {};
-    try{ d = JSON.parse(text); }catch(e){}
+    await ensureUser();
 
-    if(!r.ok) throw new Error(d.detail || "Ruletkani aylantirishda xatolik.");
 
-    prize = Number(d.prize || 0);
-    if(!prize) throw new Error("Server mukofot summasini qaytarmadi.");
+    const status =
+      await getClaimStatus();
 
-    const index = PRIZES.indexOf(prize);
-    const sector = 360 / PRIZES.length;
-    const target = index >= 0 ? index * sector + sector/2 : 0;
+
+    prize =
+      Number(status.prize || 0);
+
+
+    referrals =
+      Number(status.referrals || 0);
+
 
     /*
-      Sektor markazini tepaga olib kelamiz.
-      Qo‘shimcha 6 aylanish animatsiya uchun.
+      AGAR OLDINDAN MUKOFOT BOR BO‘LSA
+      RU­LETKA QAYTA AYLANMAYDI.
     */
-    const desired = 360 - target;
-    rotation += 360*6 + desired;
-    document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
 
-    setTimeout(()=>{
-      document.getElementById("resultAmount").textContent = money(prize);
-      showScreen("screenResult");
-      spinning = false;
-      btn.disabled = false;
-      btn.textContent = "🎯 RULETKANI AYLANtirish";
-      try{ tg?.HapticFeedback?.notificationOccurred("success"); }catch(e){}
-    },4900);
+    if(prize > 0){
 
-  }catch(e){
-    spinning = false;
-    btn.disabled = false;
-    btn.textContent = "🎯 RULETKANI AYLANtirish";
-    err.textContent = e.message || "Xatolik yuz berdi.";
-  }
-}
+      document.getElementById(
+        "resultAmount"
+      ).textContent =
+        money(prize);
 
-async function openChannels(){
-  showScreen("screenChannels");
-  const box = document.getElementById("channelList");
-  box.innerHTML = '<div class="empty">Kanallar yuklanmoqda...</div>';
 
-  try{
-    const r = await fetch("/api/channels?initData="+encodeURIComponent(initData),{
-      cache:"no-store"
-    });
-    const d = await r.json();
+      showScreen(
+        "screenResult"
+      );
 
-    if(!r.ok) throw new Error(d.detail || "Kanallarni yuklashda xatolik.");
 
-    box.innerHTML = "";
+      /*
+        Natija ko‘rsatilgandan keyin
+        obuna holatini tekshiramiz.
+      */
 
-    if(!Array.isArray(d) || d.length === 0){
-      box.innerHTML = '<div class="empty">Hozircha admin tomonidan kanal qo‘shilmagan.</div>';
+      setTimeout(async ()=>{
+
+        if(status.all_subscribed){
+
+          await openReferral();
+
+        }else{
+
+          await openChannels();
+
+        }
+
+      },800);
+
+
       return;
     }
 
-    d.forEach(c=>{
-      const row = document.createElement("div");
-      row.className = "channel";
 
-      const name = document.createElement("div");
-      name.className = "channel-name";
-      name.textContent = "📢 " + (c.title || "Kanal");
+    /*
+      MUKOFOT HALI YO‘Q.
 
-      const a = document.createElement("a");
-      a.className = "channel-link";
-      a.textContent = "KIRISH";
-      a.href = c.link || "#";
-      a.target = "_blank";
-      a.rel = "noopener";
+      Avval obunani tekshiramiz.
+    */
 
-      row.appendChild(name);
-      row.appendChild(a);
-      box.appendChild(row);
-    });
+    if(!status.all_subscribed){
 
-  }catch(e){
-    box.innerHTML = '<div class="empty" style="color:#ff9a9a">Kanallarni yuklashda xatolik.</div>';
-  }
-}
+      await openChannels();
 
-async function openReferral(){
-  showScreen("screenReferral");
-  await loadReferral();
-}
-
-async function loadReferral(){
-  try{
-    const r = await fetch("/api/referral?initData="+encodeURIComponent(initData),{
-      cache:"no-store"
-    });
-    const d = await r.json();
-
-    if(!r.ok) throw new Error(d.detail || "Referral ma’lumotlari olinmadi.");
-
-    referrals = Number(d.referrals || 0);
-    referralLink = d.ref_link || ("https://t.me/"+BOT_USERNAME+"?start=ref_"+(tg?.initDataUnsafe?.user?.id || ""));
-
-    document.getElementById("refCount").textContent = referrals;
-    document.getElementById("refFill").style.width = Math.min(referrals,10)*10 + "%";
-    document.getElementById("refLink").textContent = referralLink;
-
-    if(referrals >= 10){
-      document.getElementById("finalBtn").style.display = "block";
-      document.getElementById("refStatus").textContent = "✅ 10 ta taklif bajarildi.";
-    }else{
-      document.getElementById("finalBtn").style.display = "none";
-      document.getElementById("refStatus").textContent =
-        "Yana " + (10-referrals) + " ta taklif kerak.";
+      return;
     }
+
+
+    /*
+      HAMMA KANALGA OBUNA BO‘LSA
+      RU­LETKA KO‘RSATILADI.
+    */
+
+    showScreen(
+      "screenSpin"
+    );
+
+
   }catch(e){
-    document.getElementById("refLink").textContent = "Referral havola olinmadi.";
-    document.getElementById("refStatus").textContent = e.message || "Xatolik.";
+
+    showScreen(
+      "screenSpin"
+    );
+
+
+    document.getElementById(
+      "spinError"
+    ).textContent =
+      e.message ||
+      "Ma'lumotlarni yuklashda xatolik.";
+
   }
+
 }
 
-function copyRef(){
-  if(!referralLink) return;
-  navigator.clipboard?.writeText(referralLink)
-    .then(()=>{ document.getElementById("refStatus").textContent="✅ Havola nusxalandi."; })
-    .catch(()=>{ document.getElementById("refStatus").textContent="Havolani qo‘lda nusxalang."; });
-}
 
-function shareRef(){
-  if(!referralLink) return;
+/* =========================
+   SPIN
+========================= */
 
-  const shareUrl =
-    "https://t.me/share/url?url="+encodeURIComponent(referralLink)+
-    "&text="+encodeURIComponent("🎁 Aksiyada qatnashing! Botga kirib ruletkani aylantiring.");
+async function spin(){
 
-  if(tg?.openTelegramLink){
-    tg.openTelegramLink(shareUrl);
-  }else{
-    window.open(shareUrl,"_blank");
-  }
-}
+  if(spinning) return;
 
-function inviteFriends(){
-  shareRef();
-}
 
-async function finalClaim(){
-  await loadReferral();
+  if(!initData){
 
-  if(referrals < 10){
-    document.getElementById("refStatus").textContent =
-      "❌ Avval 10 ta yangi foydalanuvchini taklif qiling.";
+    document.getElementById(
+      "spinError"
+    ).textContent =
+      "Mini App Telegram ichidan ochilishi kerak.";
+
     return;
   }
 
-  document.getElementById("refStatus").textContent =
-    "✅ 10 ta taklif bajarildi. Mukofot olish uchun botdagi to‘lov tartibi qo‘llanadi.";
+
+  /*
+    RU­LETKA AYLANISHDAN OLDIN
+    SERVERDAN HOLATNI TEKSHIRAMIZ.
+  */
+
+  try{
+
+    const status =
+      await getClaimStatus();
+
+
+    /*
+      OLDINDAN MUKOFOT BOR BO‘LSA
+      QAYTA AYLANMAYDI.
+    */
+
+    if(Number(status.prize || 0) > 0){
+
+      prize =
+        Number(status.prize);
+
+
+      document.getElementById(
+        "resultAmount"
+      ).textContent =
+        money(prize);
+
+
+      showScreen(
+        "screenResult"
+      );
+
+
+      setTimeout(async ()=>{
+
+        if(status.all_subscribed){
+
+          await openReferral();
+
+        }else{
+
+          await openChannels();
+
+        }
+
+      },800);
+
+
+      return;
+    }
+
+
+    /*
+      OBUNA BO‘LMAGAN BO‘LSA
+      RU­LETKA AYLANMAYDI.
+    */
+
+    if(!status.all_subscribed){
+
+      await openChannels();
+
+      return;
+    }
+
+
+  }catch(e){
+
+    document.getElementById(
+      "spinError"
+    ).textContent =
+      e.message ||
+      "Obuna holatini tekshirishda xatolik.";
+
+    return;
+
+  }
+
+
+  spinning = true;
+
+
+  const btn =
+    document.getElementById(
+      "spinBtn"
+    );
+
+
+  const err =
+    document.getElementById(
+      "spinError"
+    );
+
+
+  err.textContent = "";
+
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "⏳ Ruletka aylantirilmoqda...";
+
+
+  try{
+
+    const r =
+      await fetch(
+        "/api/spin",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            initData
+          })
+        }
+      );
+
+
+    const text =
+      await r.text();
+
+
+    let d = {};
+
+    try{
+
+      d =
+        JSON.parse(text);
+
+    }catch(e){}
+
+
+    if(!r.ok){
+
+      throw new Error(
+        d.detail ||
+        "Ruletkani aylantirishda xatolik."
+      );
+
+    }
+
+
+    prize =
+      Number(d.prize || 0);
+
+
+    if(!prize){
+
+      throw new Error(
+        "Server mukofot summasini qaytarmadi."
+      );
+
+    }
+
+
+    /*
+      RU­LETKA SEKTORI
+    */
+
+    const index =
+      PRIZES.indexOf(prize);
+
+
+    const sector =
+      360 / PRIZES.length;
+
+
+    const target =
+      index >= 0
+        ? index * sector + sector / 2
+        : 0;
+
+
+    /*
+      Sektor markazini tepaga olib kelamiz.
+      6 marta aylanish.
+    */
+
+    const desired =
+      360 - target;
+
+
+    rotation +=
+      360 * 6 +
+      desired;
+
+
+    document.getElementById(
+      "wheel"
+    ).style.transform =
+      `rotate(${rotation}deg)`;
+
+
+    /*
+      NATIJA
+    */
+
+    setTimeout(async ()=>{
+
+      document.getElementById(
+        "resultAmount"
+      ).textContent =
+        money(prize);
+
+
+      showScreen(
+        "screenResult"
+      );
+
+
+      spinning = false;
+
+
+      btn.disabled = false;
+
+
+      btn.textContent =
+        "🎯 RULETKANI AYLANtirish";
+
+
+      try{
+
+        tg?.HapticFeedback
+          ?.notificationOccurred(
+            "success"
+          );
+
+      }catch(e){}
+
+
+    },4900);
+
+
+  }catch(e){
+
+    spinning = false;
+
+
+    btn.disabled = false;
+
+
+    btn.textContent =
+      "🎯 RULETKANI AYLANtirish";
+
+
+    err.textContent =
+      e.message ||
+      "Xatolik yuz berdi.";
+
+  }
+
 }
 
-/*
-  Muhim:
-  Mini App ochilganda DOIMO 1-qadam — RU­LETKA ko‘rinadi.
-  Oldingi prize bor bo‘lsa ham frontend avtomatik natija oynasiga sakramaydi.
-*/
-ensureUser();
-showScreen("screenSpin");
+
+/* =========================
+   CHANNELS
+========================= */
+
+async function openChannels(){
+
+  showScreen(
+    "screenChannels"
+  );
+
+
+  const box =
+    document.getElementById(
+      "channelList"
+    );
+
+
+  box.innerHTML =
+    '<div class="empty">Kanallar yuklanmoqda...</div>';
+
+
+  try{
+
+    const r =
+      await fetch(
+        "/api/channels?initData="+
+        encodeURIComponent(initData),
+        {
+          cache:"no-store"
+        }
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        d.detail ||
+        "Kanallarni yuklashda xatolik."
+      );
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    if(
+      !Array.isArray(d) ||
+      d.length === 0
+    ){
+
+      box.innerHTML =
+        '<div class="empty">Hozircha admin tomonidan kanal qo‘shilmagan.</div>';
+
+      return;
+    }
+
+
+    d.forEach(c=>{
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "channel";
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+
+      name.className =
+        "channel-name";
+
+
+      name.textContent =
+        "📢 " +
+        (c.title || "Kanal");
+
+
+      const a =
+        document.createElement(
+          "a"
+        );
+
+
+      a.className =
+        "channel-link";
+
+
+      a.textContent =
+        "KIRISH";
+
+
+      a.href =
+        c.link || "#";
+
+
+      a.target =
+        "_blank";
+
+
+      a.rel =
+        "noopener";
+
+
+      row.appendChild(
+        name
+      );
+
+
+      row.appendChild(
+        a
+      );
+
+
+      box.appendChild(
+        row
+      );
+
+    });
+
+
+  }catch(e){
+
+    box.innerHTML =
+      '<div class="empty" style="color:#ff9a9a">Kanallarni yuklashda xatolik.</div>';
+
+  }
+
+}
+
+
+/* =========================
+   REFERRAL
+========================= */
+
+async function openReferral(){
+
+  /*
+    BU YERDA ENG MUHIMI:
+    Telegram orqali obuna holati
+    serverdan tekshiriladi.
+  */
+
+  try{
+
+    const status =
+      await getClaimStatus();
+
+
+    /*
+      OBUNA YO‘Q BO‘LSA
+      REFERRALGA O‘TKAZMAYMIZ.
+    */
+
+    if(!status.all_subscribed){
+
+      await openChannels();
+
+      return;
+    }
+
+
+    /*
+      MUKOFOT HALI YO‘Q BO‘LSA
+      RU­LETKAGA O‘TKAZAMIZ.
+    */
+
+    if(Number(status.prize || 0) <= 0){
+
+      showScreen(
+        "screenSpin"
+      );
+
+      return;
+    }
+
+
+    /*
+      HAMMASI TO‘G‘RI:
+      REFERRAL OYNASI.
+    */
+
+    prize =
+      Number(status.prize || 0);
+
+
+    showScreen(
+      "screenReferral"
+    );
+
+
+    await loadReferral();
+
+
+  }catch(e){
+
+    document.getElementById(
+      "refStatus"
+    ).textContent =
+      e.message ||
+      "Obuna holatini tekshirishda xatolik.";
+
+  }
+
+}
+
+
+/* =========================
+   REFERRAL DATA
+========================= */
+
+async function loadReferral(){
+
+  try{
+
+    const r =
+      await fetch(
+        "/api/referral?initData="+
+        encodeURIComponent(initData),
+        {
+          cache:"no-store"
+        }
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        d.detail ||
+        "Referral ma’lumotlari olinmadi."
+      );
+
+    }
+
+
+    referrals =
+      Number(
+        d.referrals || 0
+      );
+
+
+    referralLink =
+      d.ref_link ||
+      (
+        "https://t.me/" +
+        BOT_USERNAME +
+        "?start=ref_" +
+        (
+          tg?.initDataUnsafe
+            ?.user
+            ?.id || ""
+        )
+      );
+
+
+    document.getElementById(
+      "refCount"
+    ).textContent =
+      referrals;
+
+
+    document.getElementById(
+      "refFill"
+    ).style.width =
+      Math.min(
+        referrals,
+        10
+      ) * 10 + "%";
+
+
+    document.getElementById(
+      "refLink"
+    ).textContent =
+      referralLink;
+
+
+    if(referrals >= 10){
+
+      document.getElementById(
+        "finalBtn"
+      ).style.display =
+        "block";
+
+
+      document.getElementById(
+        "refStatus"
+      ).textContent =
+        "✅ 10 ta taklif bajarildi.";
+
+    }else{
+
+      document.getElementById(
+        "finalBtn"
+      ).style.display =
+        "none";
+
+
+      document.getElementById(
+        "refStatus"
+      ).textContent =
+        "Yana " +
+        (
+          10 - referrals
+        ) +
+        " ta taklif kerak.";
+
+    }
+
+
+  }catch(e){
+
+    document.getElementById(
+      "refLink"
+    ).textContent =
+      "Referral havola olinmadi.";
+
+
+    document.getElementById(
+      "refStatus"
+    ).textContent =
+      e.message ||
+      "Xatolik.";
+
+  }
+
+}
+
+
+/* =========================
+   COPY REFERRAL
+========================= */
+
+function copyRef(){
+
+  if(!referralLink)
+    return;
+
+
+  navigator.clipboard
+    ?.writeText(
+      referralLink
+    )
+
+    .then(()=>{
+
+      document.getElementById(
+        "refStatus"
+      ).textContent =
+        "✅ Havola nusxalandi.";
+
+    })
+
+    .catch(()=>{
+
+      document.getElementById(
+        "refStatus"
+      ).textContent =
+        "Havolani qo‘lda nusxalang.";
+
+    });
+
+}
+
+
+/* =========================
+   SHARE
+========================= */
+
+function shareRef(){
+
+  if(!referralLink)
+    return;
+
+
+  const shareUrl =
+    "https://t.me/share/url?url="+
+    encodeURIComponent(
+      referralLink
+    )+
+    "&text="+
+    encodeURIComponent(
+      "🎁 Aksiyada qatnashing! Botga kirib ruletkani aylantiring."
+    );
+
+
+  if(tg?.openTelegramLink){
+
+    tg.openTelegramLink(
+      shareUrl
+    );
+
+  }else{
+
+    window.open(
+      shareUrl,
+      "_blank"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   INVITE
+========================= */
+
+function inviteFriends(){
+
+  shareRef();
+
+}
+
+
+/* =========================
+   FINAL CLAIM
+========================= */
+
+async function finalClaim(){
+
+  /*
+    Mukofot olishdan oldin
+    yana server tekshiruvi.
+  */
+
+  try{
+
+    const status =
+      await getClaimStatus();
+
+
+    /*
+      OBUNA YO‘Q
+    */
+
+    if(!status.all_subscribed){
+
+      await openChannels();
+
+      return;
+    }
+
+
+    referrals =
+      Number(
+        status.referrals || 0
+      );
+
+
+    /*
+      10 TA REFERRAL YO‘Q
+    */
+
+    if(referrals < 10){
+
+      await loadReferral();
+
+
+      document.getElementById(
+        "refStatus"
+      ).textContent =
+        "❌ Avval 10 ta yangi foydalanuvchini taklif qiling.";
+
+
+      return;
+    }
+
+
+    /*
+      10 TA REFERRAL BAJARILDI
+    */
+
+    document.getElementById(
+      "refStatus"
+    ).textContent =
+      "✅ 10 ta taklif bajarildi. Mukofot olish uchun botdagi to‘lov tartibi qo‘llanadi.";
+
+
+  }catch(e){
+
+    document.getElementById(
+      "refStatus"
+    ).textContent =
+      e.message ||
+      "Xatolik.";
+
+  }
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+startApp();
+
 </script>
+
 </body>
 </html>
