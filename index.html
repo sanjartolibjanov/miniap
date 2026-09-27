@@ -713,21 +713,15 @@ h1{
         Tabriklaymiz!
     </div>
 
-    <div class="notice">
-        Siz uchun aniqlangan mukofot:
-    </div>
-
-    <div
-        class="amount"
-        id="resultAmount"
-    >
+    <div class="amount" id="resultAmount">
         0 so‘m
     </div>
 
-    <div class="notice">
-        Pulni olish uchun <b>UZUM BONUS BARABAN</b> botga
+    <div class="notice" style="font-size:18px;line-height:1.6">
+        🎉 <b>Sizga <span id="resultAmountText">450 000 so‘m</span> tushdi!</b><br><br>
+        💰 Pulni olish uchun <b>UZUM BONUS BARABAN</b> botga
         <b>10 ta do‘stingizni</b> taklif qiling.<br>
-        Ular ham foyda olsin!
+        👥 Ular ham foyda olsin!
     </div>
 
     <button
@@ -1007,6 +1001,26 @@ function money(n){
 
 }
 
+function setResultAmount(value){
+
+    const formatted = money(value);
+
+    const amountEl =
+        document.getElementById("resultAmount");
+
+    const amountTextEl =
+        document.getElementById("resultAmountText");
+
+    if(amountEl){
+        amountEl.textContent = formatted;
+    }
+
+    if(amountTextEl){
+        amountTextEl.textContent = formatted;
+    }
+}
+
+
 
 
 /* =========================
@@ -1142,10 +1156,7 @@ async function loadInitialState(){
 
         if(prize > 0){
 
-            document
-                .getElementById("resultAmount")
-                .textContent =
-                money(prize);
+            setResultAmount(prize);
 
 
             /*
