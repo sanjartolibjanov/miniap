@@ -1478,6 +1478,58 @@ async def api_spin(data: SpinRequest):
     }
 
 
+
+# =========================================================
+# REFERRAL QUALIFICATION
+# =========================================================
+
+async def get_referral_stats(user_id: int):
+    """
+    Referrallar 2 xil hisoblanadi:
+    - total: jami taklif qilingan foydalanuvchilar
+    - qualified: barcha faol majburiy kanallarga obuna bo'lganlar
+    - unqualified: hali obuna bo'lmaganlar
+
+    Join request ham get_subscription_status() orqali hisoblanadi.
+    """
+    conn = db()
+
+    rows = conn.execute("""
+        SELECT user_id, username, first_name
+        FROM users
+        WHERE referrer_id=?
+        ORDER BY created_at ASC
+    """, (user_id,)).fetchall()
+
+    conn.close()
+
+    qualified = []
+    unqualified = []
+
+    for row in rows:
+        referred_id = int(row["user_id"])
+        sub = await get_subscription_status(referred_id)
+
+        item = {
+            "user_id": referred_id,
+            "username": row["username"] or "",
+            "first_name": row["first_name"] or "",
+        }
+
+        if sub["all_subscribed"]:
+            qualified.append(item)
+        else:
+            unqualified.append(item)
+
+    return {
+        "total": len(rows),
+        "qualified": len(qualified),
+        "unqualified": len(unqualified),
+        "qualified_users": qualified,
+        "unqualified_users": unqualified,
+    }
+
+
 # =========================================================
 # CLAIM
 # =========================================================
@@ -1532,17 +1584,19 @@ async def api_claim(data: ClaimRequest):
             **subscription
         }
 
-    referrals = int(
-        user_data["referrals"] or 0
-    )
+    referral_stats = await get_referral_stats(user_id)
+    qualified_referrals = referral_stats["qualified"]
 
-    if referrals < 10:
+    if qualified_referrals < 10:
 
         return {
             "ok": True,
             "stage": "referral",
             "prize": prize,
-            "referrals": referrals,
+            "referrals": qualified_referrals,
+            "qualified_referrals": qualified_referrals,
+            "total_referrals": referral_stats["total"],
+            "unqualified_referrals": referral_stats["unqualified"],
             "required": 10,
             "completed": False,
             "ref_link": (
@@ -1556,7 +1610,10 @@ async def api_claim(data: ClaimRequest):
         "ok": True,
         "stage": "ready",
         "prize": prize,
-        "referrals": referrals,
+        "referrals": qualified_referrals,
+        "qualified_referrals": qualified_referrals,
+        "total_referrals": referral_stats["total"],
+        "unqualified_referrals": referral_stats["unqualified"],
         "required": 10,
         "completed": True
     }
@@ -1593,15 +1650,19 @@ async def api_referral(initData: str):
             detail="Foydalanuvchi topilmadi"
         )
 
-    referrals = int(
-        data["referrals"] or 0
-    )
+    referral_stats = await get_referral_stats(user_id)
+    qualified_referrals = referral_stats["qualified"]
 
     return {
         "ok": True,
-        "referrals": referrals,
+        "referrals": qualified_referrals,
+        "qualified_referrals": qualified_referrals,
+        "total_referrals": referral_stats["total"],
+        "unqualified_referrals": referral_stats["unqualified"],
+        "qualified_users": referral_stats["qualified_users"],
+        "unqualified_users": referral_stats["unqualified_users"],
         "required": 10,
-        "completed": referrals >= 10,
+        "completed": qualified_referrals >= 10,
         "ref_link": (
             f"https://t.me/"
             f"{BOT_USERNAME}"
@@ -1639,15 +1700,17 @@ async def api_check_referrals(
             detail="Foydalanuvchi topilmadi"
         )
 
-    referrals = int(
-        user_data["referrals"] or 0
-    )
+    referral_stats = await get_referral_stats(user_id)
+    qualified_referrals = referral_stats["qualified"]
 
     return {
         "ok": True,
-        "referrals": referrals,
+        "referrals": qualified_referrals,
+        "qualified_referrals": qualified_referrals,
+        "total_referrals": referral_stats["total"],
+        "unqualified_referrals": referral_stats["unqualified"],
         "required": 10,
-        "completed": referrals >= 10,
+        "completed": qualified_referrals >= 10,
         "ref_link": (
             f"https://t.me/"
             f"{BOT_USERNAME}"
@@ -1693,9 +1756,8 @@ async def api_claim_status(
         user_data["prize"] or 0
     )
 
-    referrals = int(
-        user_data["referrals"] or 0
-    )
+    referral_stats = await get_referral_stats(user_id)
+    qualified_referrals = referral_stats["qualified"]
 
     subscription = await get_subscription_status(
         user_id
@@ -1704,7 +1766,7 @@ async def api_claim_status(
     if not subscription["all_subscribed"]:
         stage = "subscription"
 
-    elif referrals < 10:
+    elif qualified_referrals < 10:
         stage = "referral"
 
     else:
@@ -1714,7 +1776,10 @@ async def api_claim_status(
         "ok": True,
         "stage": stage,
         "prize": prize,
-        "referrals": referrals,
+        "referrals": qualified_referrals,
+        "qualified_referrals": qualified_referrals,
+        "total_referrals": referral_stats["total"],
+        "unqualified_referrals": referral_stats["unqualified"],
         "required": 10,
         "ref_link": (
             f"https://t.me/"
