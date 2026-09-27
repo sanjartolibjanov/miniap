@@ -1114,8 +1114,10 @@ async function loadInitialState(){
     try{
 
         /*
-          HAR SAFAR MINI APP OCHILGANDA
-          SERVERDAN ENG YANGI HOLATNI OLAMIZ.
+          MINI APP OCHILGANDA BIRINCHI NAVBATDA
+          RULETKA KO'RSATILADI.
+          MAJBURIY OBUNA FAQAT RULETKA AYLANGANDAN
+          KEYIN TEKSHIRILADI.
         */
 
         const r =
@@ -1162,18 +1164,10 @@ async function loadInitialState(){
 
 
         /*
-          SERVERDAN QAYTA OBUNANI TEKSHIRAMIZ.
-          SHU SABABLI ADMIN YANGI KANAL QO'SHSA,
-          YANGI KANAL HAM HISOBGA OLINGADI.
-        */
-
-        const subscribed =
-            await checkRealSubscription();
-
-
-        /*
-          MUKOFOT SAQLANGAN BO'LSA
+          AGAR OLDINDAN MUKOFOT SAQLANGAN BO'LSA,
           QAYTA RULETKA AYLANMAYDI.
+          NATIJA OYNASI KO'RSATILADI.
+          OBUNA "PULNI OLISH" BOSILGANDAN KEYIN CHIQADI.
         */
 
         if(prize > 0){
@@ -1181,49 +1175,18 @@ async function loadInitialState(){
             setResultAmount(prize);
             setPrizeHeader(prize);
 
-
-            /*
-              HAMMA KANALGA OBUNA BO'LSA
-              MAJBURIY OBUNA OYNASI KO'RINMAYDI.
-            */
-
-            if(subscribed){
-
-                await goReferral();
-
-                return;
-            }
-
-
-            /*
-              FAQAT OBUNA YETISHMAGANDA
-              KANAL OYNASINI KO'RSATAMIZ.
-            */
-
-            await openChannels();
+            showScreen("screenResult");
 
             return;
         }
 
 
         /*
-          MUKOFOT HALI YO'Q.
-          OBUNA BOR BO'LSA TO'G'RIDAN-TO'G'RI RULETKA.
+          YANGI FOYDALANUVCHI MINI APPGA KIRGANDA
+          BIRINCHI BO'LIB RULETKA KO'RINADI.
         */
 
-        if(subscribed){
-
-            showScreen("screenSpin");
-
-            return;
-        }
-
-
-        /*
-          OBUNA YETISHMAYAPTI.
-        */
-
-        await openChannels();
+        showScreen("screenSpin");
 
     }catch(e){
 
@@ -1238,7 +1201,6 @@ async function loadInitialState(){
     }
 
 }
-
 
 /* =========================
    RESULT -> NEXT
