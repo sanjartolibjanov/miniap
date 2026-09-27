@@ -56,7 +56,17 @@ ADMINS = {
     if x.strip().isdigit()
 }
 
-DB = "bot.db"
+# Railway Volume bo'lsa, database shu doimiy joyda saqlanadi.
+# Lokal kompyuterda esa odatdagi bot.db ishlaydi.
+CUSTOM_DB_PATH = os.getenv("DB_PATH", "").strip()
+RAILWAY_VOLUME_PATH = os.getenv("RAILWAY_VOLUME_MOUNT_PATH", "").strip()
+
+if CUSTOM_DB_PATH:
+    DB = CUSTOM_DB_PATH
+elif RAILWAY_VOLUME_PATH:
+    DB = os.path.join(RAILWAY_VOLUME_PATH, "bot.db")
+else:
+    DB = "bot.db"
 
 
 # =========================================================
@@ -1442,20 +1452,6 @@ async def api_spin(data: SpinRequest):
         }
 
     conn.close()
-
-    # Birinchi marta aylantirishdan oldin
-    # Telegram Bot API orqali obunani tekshiramiz.
-    subscription = await get_subscription_status(
-        user_id
-    )
-
-    if not subscription["all_subscribed"]:
-
-        return {
-            "ok": True,
-            "stage": "subscription",
-            **subscription
-        }
 
     prize = random.choice(
         PRIZES
