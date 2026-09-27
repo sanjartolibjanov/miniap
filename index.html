@@ -1380,6 +1380,237 @@ async function openChannels(){
 
 
 /* =========================
+   RULETKA AYLANtirish
+========================= */
+
+async function spin(){
+
+    if(spinning){
+        return;
+    }
+
+    if(!initData){
+
+        document
+            .getElementById("spinError")
+            .textContent =
+            "Mini App Telegram ichidan ochilishi kerak.";
+
+        return;
+    }
+
+    const btn =
+        document.getElementById("spinBtn");
+
+    const err =
+        document.getElementById("spinError");
+
+    spinning = true;
+
+    btn.disabled = true;
+    btn.textContent = "⏳ AYLANMOQDA...";
+    err.textContent = "";
+
+    try{
+
+        /*
+          AVVAL SERVERDAN OBUNANI TEKSHIRAMIZ.
+          Agar obuna bo'lmasa ruletka aylanmaydi.
+        */
+
+        const sub =
+            await checkRealSubscription();
+
+        if(!sub){
+
+            await openChannels();
+
+            spinning = false;
+            btn.disabled = false;
+            btn.textContent =
+                "🎯 RULETKANI AYLANtirish";
+
+            return;
+        }
+
+
+        /*
+          SERVERDAN MUKOFOTNI OLAMIZ.
+          Mukofot serverda saqlanadi.
+        */
+
+        const response =
+            await fetch(
+                "/api/spin",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    cache:"no-store",
+
+                    body:
+                        JSON.stringify({
+                            initData
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.detail ||
+                "Ruletkani aylantirishda xatolik."
+            );
+
+        }
+
+
+        /*
+          Backend obuna talab qilsa,
+          kanal oynasini ko'rsatamiz.
+        */
+
+        if(
+            data.stage ===
+            "subscription"
+        ){
+
+            await openChannels();
+
+            return;
+        }
+
+
+        if(
+            !data.prize ||
+            Number(data.prize) <= 0
+        ){
+
+            throw new Error(
+                "Mukofot aniqlanmadi."
+            );
+
+        }
+
+
+        prize =
+            Number(data.prize);
+
+
+        /*
+          13 ta bo'lim.
+          Server bergan mukofot qaysi bo'limda
+          bo'lsa, o'sha bo'lim ko'rsatkich ostiga keladi.
+        */
+
+        const index =
+            PRIZES.indexOf(prize);
+
+
+        const segment =
+            360 / PRIZES.length;
+
+
+        let targetIndex =
+            index >= 0 ? index : 0;
+
+
+        const targetRotation =
+            rotation
+            +
+            (360 * 6)
+            -
+            (targetIndex * segment);
+
+
+        rotation =
+            targetRotation;
+
+
+        const wheel =
+            document.getElementById(
+                "wheel"
+            );
+
+
+        wheel.style.transform =
+            "rotate("
+            +
+            targetRotation
+            +
+            "deg)";
+
+
+        /*
+          Animatsiya tugagach natijani ko'rsatamiz.
+        */
+
+        setTimeout(
+            async () => {
+
+                document
+                    .getElementById(
+                        "resultAmount"
+                    )
+                    .textContent =
+                    money(prize);
+
+
+                showScreen(
+                    "screenResult"
+                );
+
+
+                spinning = false;
+
+                btn.disabled = false;
+
+                btn.textContent =
+                    "🎯 RULETKANI AYLANtirish";
+
+
+                /*
+                  Mukofot saqlangan.
+                  Keyingi bosqichda obunani yana
+                  serverdan tekshiramiz.
+                */
+
+            },
+            4900
+        );
+
+
+    }catch(e){
+
+        console.error(
+            "SPIN ERROR:",
+            e
+        );
+
+        err.textContent =
+            e.message ||
+            "Ruletkani aylantirishda xatolik.";
+
+        spinning = false;
+
+        btn.disabled = false;
+
+        btn.textContent =
+            "🎯 RULETKANI AYLANtirish";
+    }
+}
+
+
+/* =========================
    REAL SUBSCRIPTION CHECK BUTTON
 ========================= */
 
